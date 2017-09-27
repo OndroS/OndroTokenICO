@@ -7,36 +7,36 @@ import 'zeppelin-solidity/contracts/token/StandardToken.sol';
 contract OndroTokenIco is StandardToken {
     using SafeMath for uint256;
 
-    string public name = "Ondro Test Token";
-    string public symbol = "DRB";
+    string public name = "Nazov Tokeny";
+    string public symbol = "SYMBOL";
     uint256 public decimals = 18;
 
     uint256 public totalSupply = 1000000 * (uint256(10) ** decimals);
-    uint256 public totalRaised; // total ether raised (in wei)
+    uint256 public totalRaised; // celková raisovaná suma vyjadrená vo wei
 
-    uint256 public startTimestamp = 1506420013; // timestamp after which ICO will start
-    uint256 public durationSeconds = 4 * 7 * 24 * 60 * 60; // 4 weeks
+    uint256 public startTimestamp = 1506420013; // timestamp kód po ktorom ICO bude spustené
+    uint256 public durationSeconds = 4 * 7 * 24 * 60 * 60; // 4 týždne
 
-    uint256 public minCap = 1; // the ICO ether goal (in wei)
-    uint256 public maxCap = 5;// the ICO ether max cap (in wei)
+    uint256 public minCap = 1; // minimálna cieľová suma (wei)
+    uint256 public maxCap = 1;// maximálna cieľová suma (wei)
 
     /**
-     * Address which will receive raised funds
-     * and owns the total supply of tokens
+     * Adresa ktorá získa všetky vyzbierané prostriedky
+     * a zároveň vlastní všetky tokeny
      */
-    address public fundsWallet = 0xb4F3422761CF46b868A48e269114784876d67966;/*Here paste your own address*/
+    address public fundsWallet = 0xb4F3422761CF46b868A48e269114784876d67966;/*Tu daj svoju vlastnú adresu*/
 
     function OndroTokenIco(
         /*address _fundsWallet,*/
-        uint256 _startTimestamp,
+        /*uint256 _startTimestamp,
         uint256 _minCap,
         uint256 _maxCap) {
-        /*fundsWallet = _fundsWallet;*/
+        fundsWallet = _fundsWallet;
         startTimestamp = _startTimestamp;
         minCap = _minCap;
-        maxCap = _maxCap;
+        maxCap = _maxCap;*/
 
-        // initially assign all tokens to the fundsWallet
+        // prideľ všetky tokeny do uvedenej adresy
         balances[fundsWallet] = totalSupply;
         Transfer(0x0, fundsWallet, totalSupply);
     }
@@ -49,15 +49,15 @@ contract OndroTokenIco is StandardToken {
         balances[msg.sender] = balances[msg.sender].add(tokenAmount);
         Transfer(fundsWallet, msg.sender, tokenAmount);
 
-        // immediately transfer ether to fundsWallet
+        // okamžite preveď do uvedenej adresy
         fundsWallet.transfer(msg.value);
     }
 
     function calculateTokenAmount(uint256 weiAmount) constant returns(uint256) {
-        // standard rate: 1 ETH : 50 ESP
+        // štandardný konverzný pomer: 1 ETH : 50 DRB
         uint256 tokenAmount = weiAmount.mul(50);
         if (now <= startTimestamp + 7 days) {
-            // +50% bonus during first week
+            // +50% bonus počas prvého týždňa
             return tokenAmount.mul(150).div(100);
         } else {
             return tokenAmount;
